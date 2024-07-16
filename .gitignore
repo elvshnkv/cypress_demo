@@ -130,4 +130,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-.idea
+/.idea/
+/node_modules/
+/cypress/videos/
+/cypress/logs/
+/cypress/screenshots/
