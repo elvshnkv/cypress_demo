@@ -1,53 +1,55 @@
+import UserData from '../fixtures/users.json'
+import LoginPage from "../page_object/login_page.js";
+import InventoryPage from "../page_object/inventory_page.js";
+
 describe('sauce login test', () => {
 
-  const password = 'secret_sauce'
-  const locked_out_error = 'Epic sadface: Sorry, this user has been locked out.'
+    const STANDARD_USER = UserData.standard_user.name,
+        LOCKED_OUT_USER = UserData.locked_out_user.name,
+        PROBLEM_USER = UserData.problem_user.name,
+        PERFORMANCE_GLITCH_USER = UserData.performance_glitch_user.name
 
-  it('login happy path', () => {
-    cy.visit('/v1/')
-    cy.url().should('contain','v1')
-    cy.get('#user-name').type('standard_user')
-    cy.get('#password').type('secret_sauce')
-    cy.get('#login-button').click()
-    cy.url().should('contain','inventory')
-  })
+    const locked_out_error = 'Epic sadface: Sorry, this user has been locked out.'
 
-  it('Locked out user',() => {
-    cy.visit('/v1/');
-    cy.get('[data-test = "username"]').type('locked_out_user');
-    cy.get('[data-test = "password"]').type(password)
-    cy.get('#login-button').click()
-    //cy.get('.svg-inline--fa fa-times-circle fa-w-16 fa-2x')
-    cy.get('[data-icon = "times-circle"]')
-    cy.get('[data-test = "error"]').contains(locked_out_error)
-  })
-
-  it.skip( 'Problem user', () =>{
-    cy.visit('/v1/');
-    cy.get('[data-test = "username"]').type('problem_user');
-    cy.get('[data-test = "password"]').type(password)
-    cy.get('#login-button').click()
-    //cy.get('[class="inventory_list"]').find('.inventory_item_img').forEach(element=>{cy.log(element)})
-    cy.request({
-      url: '/v1/img/sauce-backpack-1200x1500.jpgWithGarbageOnItToBreakTheUrl',
-      method: 'GET',
-      failOnStatusCode: false
-    }).then((resp) => {
-      cy.log(resp)
-      expect(resp.status).to.eq(404)
+    beforeEach(()=>{
+        LoginPage.open()
+        LoginPage.isLoginPage()
+        //LoginPage.loginUser(STANDARD_USER)
     })
-  })
 
-  it('performance glitch user',() =>{
-    const t0 = performance.now()
-    cy.visit('/v1/');
-    cy.get('[data-test = "username"]').type('performance_glitch_user');
-    cy.get('[data-test = "password"]').type(password)
-    cy.get('#login-button').click()
-    cy.get('.product_label')
-    cy.wrap(performance.now()).then(t1 => {
-      cy.log(`Page load took ${t1 - t0} milliseconds.`);
+    it('login happy path', () => {
+        cy.log('when user logins')
+        LoginPage.loginUser(STANDARD_USER)
+        cy.log('then inventory page is opened')
+        InventoryPage.isInventoryPage()
     })
-  })
+
+    it('Locked out user', () => {
+        LoginPage.loginUser(LOCKED_OUT_USER)
+        cy.get('[data-icon = "times-circle"]')
+        cy.get('[data-test = "error"]').contains(locked_out_error)
+    })
+
+    it.skip('Problem user', () => {
+        LoginPage.loginUser(PROBLEM_USER)
+        //cy.get('[class="inventory_list"]').find('.inventory_item_img').forEach(element=>{cy.log(element)})
+        cy.request({
+            url: '/v1/img/sauce-backpack-1200x1500.jpgWithGarbageOnItToBreakTheUrl',
+            method: 'GET',
+            failOnStatusCode: false
+        }).then((resp) => {
+            cy.log(resp)
+            expect(resp.status).to.eq(404)
+        })
+    })
+
+    it('performance glitch user', () => {
+        const t0 = performance.now()
+        LoginPage.loginUser(PERFORMANCE_GLITCH_USER)
+        cy.get('.product_label')
+        cy.wrap(performance.now()).then(t1 => {
+            cy.log(`Page load took ${t1 - t0} milliseconds.`);
+        })
+    })
 
 })
