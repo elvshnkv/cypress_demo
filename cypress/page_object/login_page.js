@@ -15,7 +15,7 @@ class LoginPage {
 
     loginUser(userName){
         this.UserNameInputField.type(userName)
-        this.UserPasswordInputField.type(`${Cypress.env('USER_PASSWORD')}`)
+        this.UserPasswordInputField.type(Cypress.env('USER_PASSWORD'))
         this.LoginButton.click()
     }
 

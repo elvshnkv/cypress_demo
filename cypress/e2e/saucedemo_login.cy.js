@@ -30,7 +30,7 @@ describe('sauce login test', () => {
         cy.get('[data-test = "error"]').contains(locked_out_error)
     })
 
-    it.skip('Problem user', () => {
+    it('Problem user', () => {
         LoginPage.loginUser(PROBLEM_USER)
         //cy.get('[class="inventory_list"]').find('.inventory_item_img').forEach(element=>{cy.log(element)})
         cy.request({
