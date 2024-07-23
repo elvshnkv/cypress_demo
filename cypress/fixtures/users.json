@@ -1,0 +1,14 @@
+{
+  "standard_user": {
+    "name": "standard_user"
+  },
+  "locked_out_user": {
+    "name": "locked_out_user"
+  },
+  "problem_user": {
+    "name": "problem_user"
+  },
+  "performance_glitch_user": {
+    "name": "performance_glitch_user"
+  }
+}
